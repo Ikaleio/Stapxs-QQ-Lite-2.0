@@ -74,6 +74,8 @@ Stapxs QQ Lite 需要一个 QQ Bot 后端提供服务。由于 QQ Bot 的部署�
 
 Stapxs QQ Lite 在版本发布时会构建 Web 文件，你可以在 [📦️ 这里](https://github.com/Stapxs/Stapxs-QQ-Lite-2.0/releases) 找到它，通常命名为 `Stapxs.QQ.Lite-<版本>-web.zip`，下载后解压并放置到你的网页服务器中即可。
 
+如果你是 Fork 本仓库并使用 Vercel 持续部署，仓库内置了 `.github/workflows/sync-upstream.yml`，会每 12 小时自动同步 `Stapxs/Stapxs-QQ-Lite-2.0` 的默认分支到你的默认分支。只要 Vercel 绑定的是该分支（Production Branch），同步后的新提交会自动触发重新部署。
+
 不会部署网页服务器？Stapxs QQ Lite 网页版已经发布到了 [npm](https://www.npmjs.com/package/ssqq-web)！你可以使用 npx 工具快速启动：
 
 ``` bash

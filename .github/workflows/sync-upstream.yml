@@ -1,0 +1,39 @@
+name: sync-upstream
+on:
+    workflow_dispatch:
+    schedule:
+        - cron: "0 */12 * * *"
+
+permissions:
+    contents: write
+
+jobs:
+    sync:
+        runs-on: ubuntu-latest
+        env:
+            UPSTREAM_REPO: Stapxs/Stapxs-QQ-Lite-2.0
+            SYNC_BRANCH: ${{ github.event.repository.default_branch }}
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+              with:
+                  ref: ${{ env.SYNC_BRANCH }}
+                  fetch-depth: 0
+
+            - name: Sync from upstream
+              run: |
+                  git config user.name "github-actions[bot]"
+                  git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+                  git remote add upstream "https://github.com/${UPSTREAM_REPO}.git"
+                  git fetch upstream "${SYNC_BRANCH}"
+                  BEFORE_SHA="$(git rev-parse HEAD)"
+                  if ! git merge --ff-only "upstream/${SYNC_BRANCH}"; then
+                    echo "Sync aborted: ${SYNC_BRANCH} has diverged from upstream/${SYNC_BRANCH}. Please rebase or reset your branch manually."
+                    exit 1
+                  fi
+                  AFTER_SHA="$(git rev-parse HEAD)"
+                  if [ "${BEFORE_SHA}" = "${AFTER_SHA}" ]; then
+                    echo "Already up to date."
+                    exit 0
+                  fi
+                  git push origin "${SYNC_BRANCH}"
