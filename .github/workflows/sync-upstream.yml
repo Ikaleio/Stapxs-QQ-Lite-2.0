@@ -27,7 +27,10 @@ jobs:
                   git remote add upstream "https://github.com/${UPSTREAM_REPO}.git"
                   git fetch upstream "${SYNC_BRANCH}"
                   BEFORE_SHA="$(git rev-parse HEAD)"
-                  git merge --ff-only "upstream/${SYNC_BRANCH}"
+                  if ! git merge --ff-only "upstream/${SYNC_BRANCH}"; then
+                    echo "Sync aborted: ${SYNC_BRANCH} has diverged from upstream/${SYNC_BRANCH}. Please rebase or reset your branch manually."
+                    exit 1
+                  fi
                   AFTER_SHA="$(git rev-parse HEAD)"
                   if [ "${BEFORE_SHA}" = "${AFTER_SHA}" ]; then
                     echo "Already up to date."
